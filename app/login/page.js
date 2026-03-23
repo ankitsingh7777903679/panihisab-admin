@@ -7,7 +7,7 @@ import api from "@/lib/api";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 
 export default function AdminLogin() {
-  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post("/api/auth/login", { mobile, password });
+      const res = await api.post("/api/auth/login", { email, password });
       if (res.data.success) {
         if (res.data.user.role !== 'admin') {
           toast.error("Access denied. Admins only.");
@@ -43,11 +43,12 @@ export default function AdminLogin() {
 
         <form onSubmit={handleLogin} className="p-8 space-y-5">
           <div>
-            <label className="text-gray-700 font-medium text-sm block mb-1">Admin Mobile</label>
+            <label className="text-gray-700 font-medium text-sm block mb-1">Admin Email</label>
             <input 
-              type="tel" required
-              value={mobile} onChange={e => setMobile(e.target.value)} 
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-gray-800"
+              type="email" required
+              value={email} onChange={e => setEmail(e.target.value)} 
+              className="w-full bg-gray-50 text-gray-900 border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-gray-800"
+              placeholder="admin@panihisab.com"
             />
           </div>
           <div>
@@ -55,7 +56,7 @@ export default function AdminLogin() {
             <input 
               type="password" required
               value={password} onChange={e => setPassword(e.target.value)} 
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-gray-800"
+              className="w-full bg-gray-50 text-gray-900 border border-gray-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-gray-800"
             />
           </div>
 
