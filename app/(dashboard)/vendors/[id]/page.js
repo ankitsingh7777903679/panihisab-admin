@@ -11,6 +11,9 @@ export default function VendorDetail() {
   const router = useRouter();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [extending, setExtending] = useState(false);
+  const [extendDays, setExtendDays] = useState(30);
+  const [extendStatus, setExtendStatus] = useState("active");
 
   useEffect(() => { fetchDetail(); }, [params.id]);
 
@@ -23,6 +26,28 @@ export default function VendorDetail() {
       router.push("/vendors");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExtendSubscription = async (e) => {
+    e.preventDefault();
+    if (!confirm(`Are you sure you want to extend/activate this subscription for ${extendDays} days with status ${extendStatus}?`)) return;
+    setExtending(true);
+    try {
+      const res = await api.patch(`/api/admin/vendors/${params.id}/subscription`, {
+        days: extendDays,
+        status: extendStatus
+      });
+      if (res.data.success) {
+        toast.success(res.data.message || "Subscription updated successfully!");
+        fetchDetail(); // Refresh data
+      } else {
+        toast.error(res.data.message || "Operation failed.");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update subscription");
+    } finally {
+      setExtending(false);
     }
   };
 
@@ -39,7 +64,7 @@ export default function VendorDetail() {
 
       {/* Profile Header */}
       <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-10"></div>
+        <div className="absolute top-0 left-0 w-full h-24 bg-linear-to-r from-blue-600 to-indigo-600 opacity-10"></div>
         {vendor.logoUrl ? (
           <img src={vendor.logoUrl} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md z-10" />
         ) : (
@@ -73,6 +98,63 @@ export default function VendorDetail() {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <p className="text-sm font-medium text-gray-500">Total Unpaid Amount</p>
           <p className="text-3xl font-bold text-rose-600 mt-2">₹{metrics.unpaidAmount}</p>
+        </div>
+      </div>
+
+      {/* Subscription Management */}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-900">Subscription & Access Control</h2>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+            vendor.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' :
+            vendor.subscriptionStatus === 'trial' ? 'bg-blue-100 text-blue-800' :
+            'bg-red-100 text-red-800'
+          }`}>
+            {vendor.subscriptionStatus?.toUpperCase() || "UNKNOWN"}
+          </span>
+        </div>
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-sm font-bold text-gray-700 mb-2">Current Subscription Details</h3>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li><strong>Plan:</strong> {vendor.plan || 'Free'}</li>
+              {vendor.subscriptionStatus === 'trial' && (
+                <li><strong>Trial Ends At:</strong> {vendor.trialEndsAt ? new Date(vendor.trialEndsAt).toLocaleString() : 'N/A'}</li>
+              )}
+              {vendor.subscriptionStatus === 'active' && (
+                <li><strong>Subscription Ends At:</strong> {vendor.subscriptionEndsAt ? new Date(vendor.subscriptionEndsAt).toLocaleString() : 'N/A'}</li>
+              )}
+            </ul>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <h3 className="text-sm font-bold text-gray-700 mb-3">Manually Update Plan</h3>
+            <form onSubmit={handleExtendSubscription} className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <input 
+                  type="number" min="1" 
+                  value={extendDays} onChange={e => setExtendDays(Number(e.target.value))}
+                  className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+                  placeholder="Days"
+                  required
+                />
+                <select 
+                  value={extendStatus} onChange={e => setExtendStatus(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+                >
+                  <option value="active">Active (Paid)</option>
+                  <option value="trial">Trial</option>
+                  <option value="expired">Expired</option>
+                </select>
+              </div>
+              <button 
+                type="submit" disabled={extending}
+                className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              >
+                {extending ? "Updating..." : "Update Subscription"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
