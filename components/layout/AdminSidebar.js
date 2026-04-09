@@ -9,6 +9,7 @@ import {
   TruckIcon,
   DocumentDuplicateIcon,
   ArrowRightOnRectangleIcon,
+  EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 
@@ -22,6 +23,7 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
     { name: "Customers", href: "/customers", icon: UsersIcon },
     { name: "Deliveries", href: "/deliveries", icon: TruckIcon },
     { name: "All Bills", href: "/bills", icon: DocumentDuplicateIcon },
+    { name: "Messages", href: "/messages", icon: EnvelopeIcon },
   ];
 
   return (
