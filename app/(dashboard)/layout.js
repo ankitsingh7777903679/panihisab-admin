@@ -18,7 +18,7 @@ export default function DashboardLayout({ children }) {
   if (!mounted || !isAuthenticated) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+    <div className="flex h-screen overflow-hidden bg-transparent transition-colors duration-200">
       <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <AdminHeader setIsSidebarOpen={setIsSidebarOpen} />

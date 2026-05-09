@@ -1,23 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@theme {
+  --color-slate-850: #151e2e;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+  --color-zinc-800: #27272a;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: #f8fafc;
+  background-color: #0b1326; /* Using exact Surface color from Slate Precision */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Base custom scrollbar for webkit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2); 
+}
+
+/* Glassmorphic utilities from Slate Precision */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem; /* 24px */
+}
+
+.glass-panel:hover {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-panel-emerald-glow:hover {
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.2);
 }
 
 input,
 textarea,
 select {
-  color: #111827;
+  color: #f8fafc; /* Dark mode input text */
+}
+
+/* To avoid white backgrounds on inputs autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px #0b1120 inset !important;
+    -webkit-text-fill-color: white !important;
 }

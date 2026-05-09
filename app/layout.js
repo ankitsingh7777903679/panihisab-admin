@@ -1,4 +1,5 @@
 import { AdminAuthProvider } from "../context/AdminAuthContext";
+import Providers from "./Providers";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
@@ -12,8 +13,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="bg-gray-50 text-gray-900 font-sans min-h-screen">
         <Toaster position="top-center" />
-        <AdminAuthProvider>{children}</AdminAuthProvider>
+        <AdminAuthProvider>
+          <Providers>{children}</Providers>
+        </AdminAuthProvider>
       </body>
+
     </html>
   );
 }
